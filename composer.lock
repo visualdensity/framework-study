@@ -1,0 +1,21 @@
+{
+    "hash": "3ab96b75085972e0f8dbc62d9ded0537",
+    "packages": [
+        {
+            "package": "symfony/class-loader",
+            "version": "v2.1.1"
+        },
+        {
+            "package": "symfony/http-foundation",
+            "version": "v2.1.1"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ]
+}
