@@ -1,5 +1,5 @@
 {
-    "hash": "3ab96b75085972e0f8dbc62d9ded0537",
+    "hash": "0d747f9732ab48c1a0941e51095a8e45",
     "packages": [
         {
             "package": "symfony/class-loader",
@@ -7,6 +7,10 @@
         },
         {
             "package": "symfony/http-foundation",
+            "version": "v2.1.1"
+        },
+        {
+            "package": "symfony/routing",
             "version": "v2.1.1"
         }
     ],

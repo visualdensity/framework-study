@@ -1,29 +1,34 @@
 <?php
 
-require_once __DIR__ . '/../src/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\Response,
+    Symfony\Component\Routing;
+
+//create a request object and get routes
+$request = Request::createFromGlobals();
+$routes  = include __DIR__ . '/../src/app.php';
 
 
-$request  = Request::createFromGlobals();
-$response = new Response();
+//create context
+$request_context = new Routing\RequestContext();
+$request_context->fromRequest($request);
 
-$map = array(
-    '/hello' => 'hello',
-    '/bye'   => 'bye',
-);
+$matcher = new Routing\Matcher\UrlMatcher($routes, $request_context);
 
-$path = $request->getPathInfo();
-
-if( isset($map[$path]) ) {
+try {
+    extract( $matcher->match($request->getPathInfo()), EXTR_SKIP );
     ob_start();
-    extract( $request->query->all(), EXTR_SKIP ); 
-    include sprintf( __DIR__.'/../src/pages/%s.php', $map[$path]);
-    $response->setContent(ob_get_clean());
-} else {
-    $response->setStatusCode(404);
-    $response->setContent('Page not found. Sorry!');
+    include sprintf(__DIR__ . '/../src/pages/%s.php', $_route);
+
+    $response = new Response( ob_get_clean() );
+}
+catch ( Routing\Exception\ResourceNotFoundException $e ) {
+    $response = new Response( 'Where?!', 404 );
+}
+catch ( Routing\Exception\MethodNotFoundException $e ) {
+    $response = new Response( 'Me no speak English', 500 );
 }
 
 $response->send();
