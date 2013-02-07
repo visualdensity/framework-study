@@ -1,18 +1,18 @@
 [
     {
         "name": "symfony/class-loader",
-        "version": "v2.1.1",
-        "version_normalized": "2.1.1.0",
+        "version": "v2.1.7",
+        "version_normalized": "2.1.7.0",
         "target-dir": "Symfony/Component/ClassLoader",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/ClassLoader",
-            "reference": "v2.1.1"
+            "reference": "v2.1.7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://github.com/symfony/ClassLoader/zipball/v2.1.1",
-            "reference": "v2.1.1",
+            "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/v2.1.7",
+            "reference": "v2.1.7",
             "shasum": ""
         },
         "require": {
@@ -21,19 +21,15 @@
         "require-dev": {
             "symfony/finder": "2.1.*"
         },
-        "time": "2012-08-31 11:02:36",
+        "time": "2013-01-09 08:51:07",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
                 "Symfony\\Component\\ClassLoader": ""
             }
         },
+        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
@@ -52,30 +48,25 @@
     },
     {
         "name": "symfony/http-foundation",
-        "version": "v2.1.1",
-        "version_normalized": "2.1.1.0",
+        "version": "v2.1.7",
+        "version_normalized": "2.1.7.0",
         "target-dir": "Symfony/Component/HttpFoundation",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/HttpFoundation",
-            "reference": "v2.1.1"
+            "reference": "v2.1.7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://github.com/symfony/HttpFoundation/zipball/v2.1.1",
-            "reference": "v2.1.1",
+            "url": "https://github.com/symfony/HttpFoundation/archive/v2.1.7.zip",
+            "reference": "v2.1.7",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2012-09-04 02:24:42",
+        "time": "2013-01-11 00:31:43",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
@@ -83,6 +74,7 @@
                 "SessionHandlerInterface": "Symfony/Component/HttpFoundation/Resources/stubs"
             }
         },
+        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
@@ -101,47 +93,43 @@
     },
     {
         "name": "symfony/routing",
-        "version": "v2.1.1",
-        "version_normalized": "2.1.1.0",
+        "version": "v2.1.7",
+        "version_normalized": "2.1.7.0",
         "target-dir": "Symfony/Component/Routing",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/Routing",
-            "reference": "v2.1.1"
+            "reference": "v2.1.7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://github.com/symfony/Routing/zipball/v2.1.1",
-            "reference": "v2.1.1",
+            "url": "https://api.github.com/repos/symfony/Routing/zipball/v2.1.7",
+            "reference": "v2.1.7",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
+            "doctrine/common": ">=2.2,<2.4-dev",
             "symfony/config": "2.1.*",
-            "symfony/yaml": "2.1.*",
             "symfony/http-kernel": "2.1.*",
-            "doctrine/common": ">=2.2,<2.4-dev"
+            "symfony/yaml": "2.1.*"
         },
         "suggest": {
+            "doctrine/common": ">=2.2,<2.4-dev",
             "symfony/config": "2.1.*",
-            "symfony/yaml": "2.1.*",
-            "doctrine/common": ">=2.2,<2.4-dev"
+            "symfony/yaml": "2.1.*"
         },
-        "time": "2012-09-10 10:53:42",
+        "time": "2013-01-09 08:51:07",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
                 "Symfony\\Component\\Routing": ""
             }
         },
+        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],

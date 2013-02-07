@@ -131,6 +131,8 @@ class Response
      * @param integer $status  The response status code
      * @param array   $headers An array of response headers
      *
+     * @throws \InvalidArgumentException When the HTTP status code is not valid
+     *
      * @api
      */
     public function __construct($content = '', $status = 200, $headers = array())
@@ -238,6 +240,17 @@ class Response
             if ($length) {
                 $headers->set('Content-Length', $length);
             }
+        }
+
+        // Fix protocol
+        if ('HTTP/1.0' != $request->server->get('SERVER_PROTOCOL')) {
+            $this->setProtocolVersion('1.1');
+        }
+
+        // Check if we need to send extra expire info headers
+        if ('1.0' == $this->getProtocolVersion() && 'no-cache' == $this->headers->get('Cache-Control')) {
+            $this->headers->set('pragma', 'no-cache');
+            $this->headers->set('expires', -1);
         }
 
         return $this;
@@ -420,7 +433,7 @@ class Response
     /**
      * Retrieves the status code for the current web response.
      *
-     * @return string Status code
+     * @return integer Status code
      *
      * @api
      */
@@ -488,7 +501,7 @@ class Response
      *
      * Fresh responses may be served from cache without any interaction with the
      * origin. A response is considered fresh when it includes a Cache-Control/max-age
-     * indicator or Expiration header and the calculated age is less than the freshness lifetime.
+     * indicator or Expires header and the calculated age is less than the freshness lifetime.
      *
      * @return Boolean true if the response is fresh, false otherwise
      *
@@ -574,7 +587,7 @@ class Response
      */
     public function getDate()
     {
-        return $this->headers->getDate('Date');
+        return $this->headers->getDate('Date', new \DateTime());
     }
 
     /**
@@ -601,8 +614,8 @@ class Response
      */
     public function getAge()
     {
-        if ($age = $this->headers->get('Age')) {
-            return $age;
+        if (null !== $age = $this->headers->get('Age')) {
+            return (int) $age;
         }
 
         return max(time() - $this->getDate()->format('U'), 0);
@@ -627,21 +640,26 @@ class Response
     /**
      * Returns the value of the Expires header as a DateTime instance.
      *
-     * @return \DateTime A DateTime instance
+     * @return \DateTime|null A DateTime instance or null if the header does not exist
      *
      * @api
      */
     public function getExpires()
     {
-        return $this->headers->getDate('Expires');
+        try {
+            return $this->headers->getDate('Expires');
+        } catch (\RuntimeException $e) {
+            // according to RFC 2616 invalid date formats (e.g. "0" and "-1") must be treated as in the past
+            return \DateTime::createFromFormat(DATE_RFC2822, 'Sat, 01 Jan 00 00:00:00 +0000');
+        }
     }
 
     /**
      * Sets the Expires HTTP header with a DateTime instance.
      *
-     * If passed a null value, it removes the header.
+     * Passing null as value will remove the header.
      *
-     * @param \DateTime $date A \DateTime instance
+     * @param \DateTime|null $date A \DateTime instance or null to remove the header
      *
      * @return Response
      *
@@ -661,7 +679,7 @@ class Response
     }
 
     /**
-     * Sets the number of seconds after the time specified in the response's Date
+     * Returns the number of seconds after the time specified in the response's Date
      * header when the the response should no longer be considered fresh.
      *
      * First, it checks for a s-maxage directive, then a max-age directive, and then it falls
@@ -673,12 +691,12 @@ class Response
      */
     public function getMaxAge()
     {
-        if ($age = $this->headers->getCacheControlDirective('s-maxage')) {
-            return $age;
+        if ($this->headers->hasCacheControlDirective('s-maxage')) {
+            return (int) $this->headers->getCacheControlDirective('s-maxage');
         }
 
-        if ($age = $this->headers->getCacheControlDirective('max-age')) {
-            return $age;
+        if ($this->headers->hasCacheControlDirective('max-age')) {
+            return (int) $this->headers->getCacheControlDirective('max-age');
         }
 
         if (null !== $this->getExpires()) {
@@ -739,7 +757,7 @@ class Response
      */
     public function getTtl()
     {
-        if ($maxAge = $this->getMaxAge()) {
+        if (null !== $maxAge = $this->getMaxAge()) {
             return $maxAge - $this->getAge();
         }
 
@@ -785,7 +803,9 @@ class Response
     /**
      * Returns the Last-Modified HTTP header as a DateTime instance.
      *
-     * @return \DateTime A DateTime instance
+     * @return \DateTime|null A DateTime instance or null if the header does not exist
+     *
+     * @throws \RuntimeException When the HTTP header is not parseable
      *
      * @api
      */
@@ -797,9 +817,9 @@ class Response
     /**
      * Sets the Last-Modified HTTP header with a DateTime instance.
      *
-     * If passed a null value, it removes the header.
+     * Passing null as value will remove the header.
      *
-     * @param \DateTime $date A \DateTime instance
+     * @param \DateTime|null $date A \DateTime instance or null to remove the header
      *
      * @return Response
      *
@@ -821,7 +841,7 @@ class Response
     /**
      * Returns the literal value of the ETag HTTP header.
      *
-     * @return string The ETag HTTP header
+     * @return string|null The ETag HTTP header or null if it does not exist
      *
      * @api
      */
@@ -833,8 +853,8 @@ class Response
     /**
      * Sets the ETag value.
      *
-     * @param string  $etag The ETag unique identifier
-     * @param Boolean $weak Whether you want a weak ETag or not
+     * @param string|null $etag The ETag unique identifier or null to remove the header
+     * @param Boolean     $weak Whether you want a weak ETag or not
      *
      * @return Response
      *
@@ -941,7 +961,7 @@ class Response
      */
     public function hasVary()
     {
-        return (Boolean) $this->headers->get('Vary');
+        return null !== $this->headers->get('Vary');
     }
 
     /**
